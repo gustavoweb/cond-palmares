@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passo a passo · Painel do Condomínio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: apostila de laboratório — índice lateral fixo no desktop, etapas numeradas com checklist e blocos de código copiáveis */
+:root{
+  --bg:#f3f5f6; --surface:#ffffff; --ink:#1b2a33; --muted:#5d6d77; --line:#d6dde2;
+  --brand:#0f5257; --brand-ink:#ffffff; --accent:#e0a12a; --code:#14232b; --code-ink:#dfeaea; --tip:#e7f1f0; --warn:#fbf1dd;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Barlow","Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#121a1f; --surface:#1b262d; --ink:#e6edf0; --muted:#97a8b1; --line:#2c3a42;
+  --brand:#0c3f43; --brand-ink:#e9f5f4; --accent:#f0b84a; --code:#0b1418; --code-ink:#dfeaea; --tip:#173033; --warn:#3a2f17; color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body);padding-top:env(safe-area-inset-top,0px)}
+a{color:var(--brand)} @media (prefers-color-scheme:dark){a{color:var(--accent)}}
+.hero{background:var(--brand);color:var(--brand-ink)}
+.hero .in{max-width:1180px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-left,0px)) 26px}
+.hero small{font:500 11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.hero h1{font:700 clamp(30px,5vw,46px)/1.05 var(--f-display);margin:6px 0 10px;text-wrap:balance}
+.hero p{margin:0;max-width:70ch;opacity:.92}
+.prog{margin-top:16px;display:flex;align-items:center;gap:12px;font:500 13px var(--f-mono)}
+.prog .track{flex:0 1 320px;height:8px;background:rgba(255,255,255,.18);border-radius:4px;overflow:hidden}
+.prog .fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+.layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px minmax(0,1fr);gap:28px;padding:24px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px))}
+.toc{position:sticky;top:16px;align-self:start;font-size:14px}
+.toc b{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.toc ol{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.toc a{display:flex;gap:8px;text-decoration:none;color:var(--ink);padding:5px 8px;border-radius:6px}
+.toc a:hover{background:var(--surface)}
+.toc a span{font:500 12px var(--f-mono);color:var(--muted);width:20px}
+.toc a.done{color:var(--muted);text-decoration:line-through}
+main{min-width:0;display:flex;flex-direction:column;gap:22px}
+section.step{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.num{font:700 15px var(--f-mono);color:var(--brand-ink);background:var(--brand);border-radius:6px;padding:2px 8px}
+h2{font:600 28px/1.15 var(--f-display);margin:0;text-wrap:balance;flex:1}
+h3{font:600 20px var(--f-display);margin:20px 0 6px}
+.mark{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+p,li{max-width:76ch}
+ol.steps{padding-left:22px} ol.steps li{margin:6px 0}
+kbd,.ui{font:500 13px var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;white-space:nowrap}
+code{font:13px var(--f-mono)}
+.codebox{position:relative;margin:10px 0}
+.codebox pre{background:var(--code);color:var(--code-ink);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:0;font:13px/1.55 var(--f-mono)}
+.copy{position:absolute;top:8px;right:8px;font:500 12px var(--f-body);background:var(--accent);color:#1b2a33;border:none;border-radius:5px;padding:4px 10px;cursor:pointer}
+.copy:focus-visible,.mark input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tbl{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th{text-align:left;font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line);padding:7px 8px}
+td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+.tip,.warn{border-radius:8px;padding:10px 14px;margin:12px 0;font-size:15px}
+.tip{background:var(--tip)} .warn{background:var(--warn)}
+.tip b,.warn b{font:600 13px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
+.wire{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;margin:12px 0;font:500 11px var(--f-mono);color:var(--muted)}
+.wire div{background:var(--surface);border:1px dashed var(--line);border-radius:4px;padding:6px;text-align:center;min-height:30px;display:grid;place-items:center}
+.wire .h{grid-column:span 12;background:var(--brand);color:var(--brand-ink);border:none}
+.wire .f{grid-column:span 12}
+.wire .c{grid-column:span 3}
+.wire .g7{grid-column:span 7;min-height:80px}.wire .g5{grid-column:span 5;min-height:80px}
+.foot{color:var(--muted);font-size:13px}
+@media (max-width:860px){.layout{grid-template-columns:1fr}.toc{position:static}.toc ol{flex-direction:row;flex-wrap:wrap}.toc a span{width:auto}section.step{padding:18px 16px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="in">
+  <small>Power BI · Projeto prático · Prof. Gustavo</small>
+  <h1>Painel do Residencial Vila das Palmeiras</h1>
+  <p>Roteiro completo para montar as 3 telas (Moradores, Movimento &amp; Garagem, Ocorrências) a partir da planilha <b>Base_PowerBI_Condominio.xlsx</b>, com menu superior retrátil. Marque cada etapa ao terminar.</p>
+  <p style="margin-top:10px;font:500 14px var(--f-mono);opacity:.9">Prof. Gustavo · <a href="https://gustavoweb.com" target="_blank" rel="noopener" style="color:inherit">gustavoweb.com</a></p>
+  <div class="prog"><div class="track"><div class="fill" id="fill"></div></div><span id="progTxt">0 de 12 etapas</span></div>
+</div></header>
+
+<div class="layout">
+<nav class="toc" aria-label="Etapas"><b>Etapas</b><ol id="toc"></ol></nav>
+<main>
+
+<!-- 1 -->
+<section class="step" id="s1" data-t="Importar os dados">
+<div class="sh"><span class="num">01</span><h2>Importar os dados</h2></div>
+<ol class="steps">
+  <li>Abra o Power BI Desktop e salve o projeto vazio como <b>Painel_Condominio.pbix</b>.</li>
+  <li><span class="ui">Página Inicial › Obter dados › Pasta de Trabalho do Excel</span> e escolha <b>Base_PowerBI_Condominio.xlsx</b>.</li>
+  <li>No Navegador, marque as <b>tabelas</b> (ícone de tabela, não o de planilha): <code>dUnidades, fMoradores, fMovimentacao, fOcupacaoEstac, dVagas, fOcorrencias, dCalendario, dHora</code>. Ignore as abas LEIA-ME, Medidas_DAX, Layout_Telas e Menu_Retratil.</li>
+  <li>Clique em <span class="ui">Transformar Dados</span> (não em Carregar) para conferir os tipos antes.</li>
+</ol>
+<div class="tip"><b>Por que tabelas?</b>Cada aba já está formatada como Tabela do Excel. Se um dia você acrescentar linhas na planilha, basta clicar em Atualizar no Power BI.</div>
+</section>
+
+<!-- 2 -->
+<section class="step" id="s2" data-t="Ajustar no Power Query">
+<div class="sh"><span class="num">02</span><h2>Ajustar tipos no Power Query</h2></div>
+<p>Confira o ícone de tipo no cabeçalho de cada coluna e corrija se precisar:</p>
+<div class="tbl"><table>
+<thead><tr><th>Tabela</th><th>Coluna</th><th>Tipo correto</th></tr></thead>
+<tbody>
+<tr><td>dCalendario, fMovimentacao, fOcupacaoEstac, fOcorrencias</td><td>Data</td><td>Data</td></tr>
+<tr><td>fMovimentacao, fOcorrencias</td><td>Hora</td><td>Hora</td></tr>
+<tr><td>fMoradores</td><td>Data_Nascimento, Data_Entrada</td><td>Data</td></tr>
+<tr><td>fOcorrencias</td><td>Valor_Multa</td><td>Número decimal fixo (moeda)</td></tr>
+<tr><td>fOcorrencias</td><td>Dias_Resolucao</td><td>Número inteiro (vazio = ainda não resolvida)</td></tr>
+<tr><td>todas</td><td>Hora_Cheia, Andar, Qtd_*</td><td>Número inteiro</td></tr>
+</tbody></table></div>
+<p>Depois: <span class="ui">Página Inicial › Fechar e Aplicar</span>.</p>
+<div class="warn"><b>Atenção</b>Se a coluna Hora vier como Data/Hora com 30/12/1899, mude para o tipo <b>Hora</b>. É só o jeito que o Excel guarda horários.</div>
+</section>
+
+<!-- 3 -->
+<section class="step" id="s3" data-t="Relacionamentos">
+<div class="sh"><span class="num">03</span><h2>Criar os relacionamentos</h2></div>
+<p>Vá para a <span class="ui">Exibição de modelo</span>. O Power BI pode ter criado alguns sozinho: apague os que estiverem diferentes desta lista. Todos são <b>Muitos para um (*:1)</b> com <b>direção única</b>.</p>
+<div class="tbl"><table>
+<thead><tr><th>De (muitos)</th><th>Para (um)</th></tr></thead>
+<tbody>
+<tr><td>fMoradores[ID_Unidade]</td><td>dUnidades[ID_Unidade]</td></tr>
+<tr><td>fMovimentacao[ID_Unidade]</td><td>dUnidades[ID_Unidade]</td></tr>
+<tr><td>fOcorrencias[ID_Unidade]</td><td>dUnidades[ID_Unidade]</td></tr>
+<tr><td>dVagas[ID_Unidade]</td><td>dUnidades[ID_Unidade]</td></tr>
+<tr><td>fMovimentacao[Data]</td><td>dCalendario[Data]</td></tr>
+<tr><td>fOcupacaoEstac[Data]</td><td>dCalendario[Data]</td></tr>
+<tr><td>fOcorrencias[Data]</td><td>dCalendario[Data]</td></tr>
+<tr><td>fMovimentacao[Hora_Cheia]</td><td>dHora[Hora_Cheia]</td></tr>
+<tr><td>fOcupacaoEstac[Hora_Cheia]</td><td>dHora[Hora_Cheia]</td></tr>
+<tr><td>fOcorrencias[Hora_Cheia]</td><td>dHora[Hora_Cheia]</td></tr>
+</tbody></table></div>
+<h3>Ajustes no modelo</h3>
+<ol class="steps">
+  <li>Clique com o botão direito em <b>dCalendario › Marcar como tabela de datas</b> e escolha a coluna Data.</li>
+  <li>Na exibição de tabela, selecione <code>dCalendario[Mes_Nome]</code> › <span class="ui">Ferramentas de coluna › Classificar por coluna › Mes_Num</span>. Repita para <code>Mes_Abrev</code>.</li>
+  <li>Faça o mesmo com <code>Dia_Semana</code> classificado por <code>Dia_Semana_Num</code>, e <code>Hora_Label</code> por <code>Hora_Cheia</code>.</li>
+  <li>Oculte (ícone de olho) as colunas Torre e Andar das tabelas <b>f</b>: nos visuais use sempre <code>dUnidades[Torre]</code> e <code>dUnidades[Andar]</code>, assim um único filtro funciona nas 3 telas.</li>
+</ol>
+<div class="tip"><b>Regra de ouro</b>Filtros e eixos vêm das tabelas <b>d</b> (dimensões). Valores vêm das medidas.</div>
+</section>
+
+<!-- 4 -->
+<section class="step" id="s4" data-t="Medidas DAX">
+<div class="sh"><span class="num">04</span><h2>Criar a tabela de medidas</h2></div>
+<ol class="steps">
+  <li><span class="ui">Página Inicial › Inserir dados</span>, nomeie a tabela como <b>_Medidas</b> e clique em Carregar.</li>
+  <li>Com a tabela _Medidas selecionada, use <span class="ui">Nova medida</span> e cole uma medida por vez.</li>
+  <li>Quando tiver a primeira medida, apague a Coluna1. A tabela vira uma pasta de medidas e sobe para o topo da lista de campos.</li>
+  <li>Ajuste o formato de cada medida em <span class="ui">Ferramentas de medida</span> (%, R$, casas decimais).</li>
+</ol>
+<h3>Tela 1 · Moradores</h3>
+<div class="codebox"><pre>Total Moradores = COUNTROWS(fMoradores)
+
+Total Unidades = COUNTROWS(dUnidades)
+
+Unidades Ocupadas = CALCULATE([Total Unidades], dUnidades[Situacao] = "Ocupado")
+
+Taxa de Ocupação = DIVIDE([Unidades Ocupadas], [Total Unidades])
+
+Média Moradores por Ap = DIVIDE([Total Moradores], [Unidades Ocupadas])
+
+Idade Média = AVERAGE(fMoradores[Idade])
+
+Total Pets = SUM(dUnidades[Qtd_Pets])
+
+% Inquilinos = DIVIDE(CALCULATE([Total Unidades], dUnidades[Tipo_Ocupacao] = "Inquilino"), [Unidades Ocupadas])</pre><button class="copy">Copiar</button></div>
+<h3>Tela 2 · Movimento &amp; Garagem</h3>
+<div class="codebox"><pre>Total Movimentos = COUNTROWS(fMovimentacao)
+
+Entradas = CALCULATE([Total Movimentos], fMovimentacao[Tipo_Movimento] = "Entrada")
+
+Saídas = CALCULATE([Total Movimentos], fMovimentacao[Tipo_Movimento] = "Saída")
+
+Visitantes = CALCULATE([Entradas], fMovimentacao[Tipo_Pessoa] = "Visitante")
+
+Média Movimentos por Dia = DIVIDE([Total Movimentos], DISTINCTCOUNT(fMovimentacao[Data]))
+
+Permanência Média (min) = AVERAGE(fMovimentacao[Permanencia_min])
+
+% Ocupação Estacionamento = DIVIDE(SUM(fOcupacaoEstac[Vagas_Ocupadas]), SUM(fOcupacaoEstac[Vagas_Total]))
+
+Pico de Ocupação = MAX(fOcupacaoEstac[Vagas_Ocupadas])</pre><button class="copy">Copiar</button></div>
+<h3>Tela 3 · Ocorrências</h3>
+<div class="codebox"><pre>Total Ocorrências = COUNTROWS(fOcorrencias)
+
+Ocorrências Abertas = CALCULATE([Total Ocorrências], fOcorrencias[Status] &lt;&gt; "Resolvida")
+
+% Resolvidas = DIVIDE(CALCULATE([Total Ocorrências], fOcorrencias[Status] = "Resolvida"), [Total Ocorrências])
+
+Total Multas (R$) = SUM(fOcorrencias[Valor_Multa])
+
+Tempo Médio Resolução (dias) = AVERAGE(fOcorrencias[Dias_Resolucao])
+
+% Reincidência = DIVIDE(CALCULATE([Total Ocorrências], fOcorrencias[Reincidente] = "Sim"), [Total Ocorrências])
+
+Ocorrências Fora do Horário = CALCULATE([Total Ocorrências], dHora[Horario_Silencio] = "Sim")
+
+Cor Horário = IF(MAX(dHora[Horario_Silencio]) = "Sim", "#C2453A", "#5B7FA6")</pre><button class="copy">Copiar</button></div>
+<div class="tip"><b>Dica</b>Crie uma medida por vez. Se colar o bloco todo de uma vez, o Power BI dá erro: ele só aceita uma medida por fórmula.</div>
+</section>
+
+<!-- 5 -->
+<section class="step" id="s5" data-t="Tema e página">
+<div class="sh"><span class="num">05</span><h2>Tema de cores e tamanho da página</h2></div>
+<ol class="steps">
+  <li>Copie o JSON abaixo, cole no Bloco de Notas e salve como <b>tema_condominio.json</b>.</li>
+  <li><span class="ui">Exibir › Temas › Procurar temas</span> e selecione o arquivo.</li>
+  <li>Em <span class="ui">Formatar página › Configurações de tela</span> deixe <b>16:9 (1280 × 720)</b>.</li>
+</ol>
+<div class="codebox"><pre>{
+  "name": "Condominio Vila das Palmeiras",
+  "dataColors": ["#0F5257", "#5B7FA6", "#E0A12A", "#9FC3C0", "#C2453A", "#5D6D77"],
+  "background": "#FFFFFF",
+  "foreground": "#1B2A33",
+  "tableAccent": "#0F5257",
+  "good": "#2F8A5B",
+  "neutral": "#E0A12A",
+  "bad": "#C2453A",
+  "visualStyles": {
+    "page": { "*": { "background": [{ "color": { "solid": { "color": "#EEF1F3" } }, "transparency": 0 }] } },
+    "*": { "*": { "border": [{ "show": true, "color": { "solid": { "color": "#D6DDE2" } }, "radius": 8 }] } }
+  }
+}</pre><button class="copy">Copiar</button></div>
+<h3>Grade sugerida (igual nas 3 telas)</h3>
+<div class="wire" aria-hidden="true">
+  <div class="h">Faixa superior · ☰ + título  (y 0 · altura 60)</div>
+  <div class="f">Filtros / segmentações  (y 64 · altura 56)</div>
+  <div class="c">Cartão</div><div class="c">Cartão</div><div class="c">Cartão</div><div class="c">Cartão</div>
+  <div class="g7">Gráfico 1</div><div class="g5">Gráfico 2</div>
+  <div class="g5">Gráfico 3</div><div class="g7">Visual extra</div>
+</div>
+<div class="tbl"><table>
+<thead><tr><th>Elemento</th><th>X</th><th>Y</th><th>Largura</th><th>Altura</th></tr></thead>
+<tbody>
+<tr><td>Faixa superior (retângulo)</td><td>0</td><td>0</td><td>1280</td><td>60</td></tr>
+<tr><td>Faixa de filtros</td><td>0</td><td>64</td><td>1280</td><td>56</td></tr>
+<tr><td>Cartões (4 lado a lado)</td><td>16 / 332 / 648 / 964</td><td>130</td><td>300</td><td>90</td></tr>
+<tr><td>Linha 1 de gráficos</td><td>16 e 730</td><td>232</td><td>700 e 534</td><td>232</td></tr>
+<tr><td>Linha 2 de gráficos</td><td>16 e 566</td><td>476</td><td>534 e 698</td><td>232</td></tr>
+</tbody></table></div>
+<div class="tip"><b>Atalho</b>Ajuste posição e tamanho exatos em <span class="ui">Formatar › Geral › Propriedades</span>.</div>
+</section>
+
+<!-- 6 -->
+<section class="step" id="s6" data-t="Faixa superior">
+<div class="sh"><span class="num">06</span><h2>Montar a faixa superior e os filtros (Tela 1)</h2></div>
+<ol class="steps">
+  <li>Renomeie a página para <b>Moradores</b>. Mais tarde ela vira modelo para as outras duas.</li>
+  <li><span class="ui">Inserir › Formas › Retângulo</span> na posição da faixa superior, cor <code>#0F5257</code>, sem borda.</li>
+  <li><span class="ui">Inserir › Caixa de texto</span>: "Residencial Vila das Palmeiras · Moradores", fonte branca 20.</li>
+  <li><span class="ui">Inserir › Botões › Em branco</span> no canto esquerdo (40 × 40). Em Formatar › Estilo › Texto, digite <b>☰</b> (copie daqui), fonte branca 22. Nomeie no painel Seleção como <b>btnAbrir</b>.</li>
+  <li>Insira as <b>segmentações</b> na faixa de filtros, estilo <b>Bloco</b> (horizontal) ou <b>Suspenso</b>:
+    <code>dUnidades[Torre]</code>, <code>dUnidades[Tipo_Ocupacao]</code>, <code>dUnidades[Tipo_Unidade]</code>.</li>
+</ol>
+<div class="tip"><b>Dica</b>Ligue <span class="ui">Exibir › Painel de seleção</span> agora. Dar nome aos objetos é o que torna o menu retrátil fácil na etapa 10.</div>
+</section>
+
+<!-- 7 -->
+<section class="step" id="s7" data-t="Tela 1 · Moradores">
+<div class="sh"><span class="num">07</span><h2>Tela 1 · Moradores</h2></div>
+<h3>Cartões</h3>
+<p>Use o visual <b>Cartão</b> (ou o novo Cartão com várias linhas) com: <code>[Total Moradores]</code>, <code>[Média Moradores por Ap]</code>, <code>[Taxa de Ocupação]</code>, <code>[Total Pets]</code>.</p>
+<h3>Gráficos</h3>
+<div class="tbl"><table>
+<thead><tr><th>Visual</th><th>Eixo / Linhas</th><th>Legenda / Colunas</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td>Colunas agrupadas · "Moradores por andar"</td><td>dUnidades[Andar]</td><td>dUnidades[Torre]</td><td>[Total Moradores]</td></tr>
+<tr><td>Rosca · "Faixa etária"</td><td>–</td><td>fMoradores[Faixa_Etaria]</td><td>[Total Moradores]</td></tr>
+<tr><td>Barras empilhadas 100% · "Proprietários x inquilinos"</td><td>dUnidades[Torre]</td><td>dUnidades[Tipo_Ocupacao]</td><td>[Total Unidades]</td></tr>
+<tr><td>Matriz · "Mapa do prédio"</td><td>dUnidades[Andar]</td><td>dUnidades[Torre], dUnidades[Final]</td><td>Soma de Qtd_Moradores</td></tr>
+</tbody></table></div>
+<h3>Transformar a matriz em mapa de calor</h3>
+<ol class="steps">
+  <li>Em Valores, clique na seta do campo › <span class="ui">Formatação condicional › Cor da tela de fundo</span>. Gradiente de branco até <code>#0F5257</code>.</li>
+  <li>Faça o mesmo em <span class="ui">Cor da fonte</span> se quiser números brancos nos aps mais cheios.</li>
+  <li>Para o 10º andar ficar em cima: no "…" do visual › <span class="ui">Classificar eixo › Andar › Decrescente</span>.</li>
+  <li>Desligue os subtotais e totais de linha e coluna em <span class="ui">Formatar › Subtotais</span>.</li>
+</ol>
+<div class="tip"><b>Confira</b>Sem filtros: 196 moradores · 2,7 por ap · 91,3% de ocupação · 32 pets.</div>
+</section>
+
+<!-- 8 -->
+<section class="step" id="s8" data-t="Tela 2 · Movimento">
+<div class="sh"><span class="num">08</span><h2>Tela 2 · Movimento &amp; Garagem</h2></div>
+<ol class="steps">
+  <li>Clique com o botão direito na aba da página <b>Moradores › Duplicar página</b>. Renomeie para <b>Movimento</b>. Assim a faixa, o botão e os filtros já vêm prontos.</li>
+  <li>Apague os visuais e cartões e troque o texto do título.</li>
+  <li>Segmentações: <code>dUnidades[Torre]</code>, <code>dCalendario[Mes_Nome]</code>, <code>fMovimentacao[Tipo_Pessoa]</code>, <code>fMovimentacao[Meio_Acesso]</code>.</li>
+</ol>
+<p><b>Cartões:</b> <code>[Entradas]</code>, <code>[Visitantes]</code>, <code>[Média Movimentos por Dia]</code>, <code>[% Ocupação Estacionamento]</code>.</p>
+<div class="tbl"><table>
+<thead><tr><th>Visual</th><th>Eixo</th><th>Legenda</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td>Linhas · "Movimento por hora"</td><td>dHora[Hora_Label]</td><td>fMovimentacao[Tipo_Movimento]</td><td>[Total Movimentos]</td></tr>
+<tr><td>Colunas empilhadas · "Entradas por tipo de pessoa"</td><td>dCalendario[Dia_Semana]</td><td>fMovimentacao[Tipo_Pessoa]</td><td>[Entradas]</td></tr>
+<tr><td>Linhas · "Ocupação da garagem"</td><td>dHora[Hora_Label]</td><td>fOcupacaoEstac[Setor]</td><td>[% Ocupação Estacionamento]</td></tr>
+<tr><td>Medidor (extra)</td><td>–</td><td>–</td><td>[% Ocupação Estacionamento] · Máximo 1</td></tr>
+</tbody></table></div>
+<h3>Linha de alerta em 90%</h3>
+<p>Selecione o gráfico da garagem › painel <span class="ui">Análise</span> (lupa) › <span class="ui">Linha constante › Adicionar</span>, valor <b>0,9</b>, cor vermelha, tracejada.</p>
+<div class="warn"><b>Importante</b>A tabela fOcupacaoEstac não tem apartamento, então a segmentação de Torre não filtra a garagem. Para que ela não confunda, selecione a segmentação Torre › <span class="ui">Formatar › Editar interações</span> e clique no ícone ⊘ (Nenhum) em cima do gráfico da garagem e do cartão de ocupação. Para filtrar a garagem, use uma segmentação de <code>fOcupacaoEstac[Setor]</code>.</div>
+<div class="tip"><b>Confira</b>Sem filtros: 6.720 entradas · 1.611 visitantes · 70 movimentos por dia · 63,1% de ocupação média da garagem.</div>
+</section>
+
+<!-- 9 -->
+<section class="step" id="s9" data-t="Tela 3 · Ocorrências">
+<div class="sh"><span class="num">09</span><h2>Tela 3 · Ocorrências</h2></div>
+<ol class="steps">
+  <li>Duplique a página de novo e renomeie para <b>Ocorrências</b>.</li>
+  <li>Segmentações: <code>dUnidades[Torre]</code>, <code>dCalendario[Mes_Nome]</code>, <code>fOcorrencias[Gravidade]</code>, <code>fOcorrencias[Status]</code>.</li>
+</ol>
+<p><b>Cartões:</b> <code>[Total Ocorrências]</code>, <code>[Ocorrências Abertas]</code>, <code>[% Resolvidas]</code>, <code>[Total Multas (R$)]</code>.</p>
+<div class="tbl"><table>
+<thead><tr><th>Visual</th><th>Eixo</th><th>Legenda</th><th>Valor</th></tr></thead>
+<tbody>
+<tr><td>Barras clusterizadas · "Por categoria"</td><td>fOcorrencias[Categoria]</td><td>–</td><td>[Total Ocorrências] (classificar decrescente)</td></tr>
+<tr><td>Linhas · "Evolução mensal"</td><td>dCalendario[Mes_Nome]</td><td>dUnidades[Torre]</td><td>[Total Ocorrências]</td></tr>
+<tr><td>Colunas · "Horário das ocorrências"</td><td>dHora[Hora_Label]</td><td>–</td><td>[Total Ocorrências]</td></tr>
+<tr><td>Tabela · "Top 5 unidades"</td><td colspan="3">dUnidades[ID_Unidade], [Total Ocorrências], [Total Multas (R$)]</td></tr>
+</tbody></table></div>
+<h3>Colunas vermelhas no horário de silêncio</h3>
+<ol class="steps">
+  <li>Selecione o gráfico de horário › <span class="ui">Formatar › Colunas › Cor</span> › botão <b>fx</b>.</li>
+  <li>Estilo de formato: <b>Valor do campo</b>. Campo: a medida <code>[Cor Horário]</code>.</li>
+</ol>
+<h3>Top 5 na tabela</h3>
+<p>Selecione a tabela › painel Filtros › <code>ID_Unidade</code> › Tipo de filtro <b>N superior</b> › Mostrar itens: Superior 5 › Por valor: arraste <code>[Total Ocorrências]</code> › Aplicar filtro. Adicione uma barra de dados em <span class="ui">Formatação condicional › Barras de dados</span> no total.</p>
+<div class="tip"><b>Confira</b>Sem filtros: 340 ocorrências · 109 em aberto · 67,9% resolvidas · R$ 21.057,60 em multas.</div>
+</section>
+
+<!-- 10 -->
+<section class="step" id="s10" data-t="Menu retrátil">
+<div class="sh"><span class="num">10</span><h2>Menu superior retrátil</h2></div>
+<p>A ideia: um grupo <b>grpMenu</b> (painel com os botões de navegação) e um grupo <b>grpFiltros</b> (as segmentações). Dois indicadores por página alternam qual dos dois aparece.</p>
+<h3>Montar o menu (na página Moradores)</h3>
+<ol class="steps">
+  <li>Desenhe um retângulo na mesma posição da faixa de filtros, mas um pouco mais alto (y 60, altura 110), na cor da faixa superior.</li>
+  <li>Dentro dele, insira 3 botões <b>Em branco</b> com os textos Moradores, Movimento &amp; Garagem e Ocorrências.</li>
+  <li>Em cada botão: <span class="ui">Ação › Tipo: Navegação de página › Destino</span> a página correspondente.</li>
+  <li>Insira um botão <b>✕</b> no mesmo lugar do ☰ e nomeie <b>btnFechar</b>.</li>
+  <li>No painel Seleção, selecione o retângulo, os 3 botões e o btnFechar › botão direito › <span class="ui">Agrupar</span>. Renomeie o grupo para <b>grpMenu</b>.</li>
+  <li>Selecione todas as segmentações › Agrupar › renomeie para <b>grpFiltros</b>.</li>
+</ol>
+<h3>Criar os indicadores</h3>
+<ol class="steps">
+  <li><span class="ui">Exibir › Indicadores</span> para abrir o painel.</li>
+  <li><b>Estado fechado:</b> no painel Seleção, oculte grpMenu (olho) e deixe grpFiltros e btnAbrir visíveis. Clique em <span class="ui">Adicionar</span> e renomeie para <b>P1 Menu Fechado</b>.</li>
+  <li><b>Estado aberto:</b> mostre grpMenu, oculte grpFiltros e btnAbrir. Adicione e renomeie para <b>P1 Menu Aberto</b>.</li>
+  <li>Em cada um dos dois indicadores, clique em <span class="ui">… </span> e <b>desmarque "Dados"</b>. Deixe marcados "Exibir" e "Página atual".</li>
+  <li>Volte ao estado fechado clicando no indicador P1 Menu Fechado.</li>
+</ol>
+<div class="warn"><b>Não pule</b>Com "Dados" marcado, o indicador grava os filtros do momento. Cada vez que o usuário abrir o menu, os filtros dele seriam apagados.</div>
+<h3>Ligar os botões</h3>
+<ol class="steps">
+  <li><b>btnAbrir (☰)</b> › Ação › Tipo: <b>Indicador</b> › P1 Menu Aberto.</li>
+  <li><b>btnFechar (✕)</b> › Ação › Tipo: <b>Indicador</b> › P1 Menu Fechado.</li>
+  <li>Teste com <kbd>Ctrl</kbd> + clique no Desktop.</li>
+</ol>
+<h3>Repetir nas outras páginas</h3>
+<ol class="steps">
+  <li>Copie grpMenu e btnAbrir da página Moradores (<kbd>Ctrl</kbd>+<kbd>C</kbd>) e cole nas outras (<kbd>Ctrl</kbd>+<kbd>V</kbd>). O Power BI pergunta se quer sincronizar: escolha <b>Sincronizar</b>, assim os objetos ficam na mesma posição.</li>
+  <li>Agrupe as segmentações de cada página como grpFiltros.</li>
+  <li>Crie os indicadores <b>P2 Menu Fechado / P2 Menu Aberto</b> e <b>P3 Menu Fechado / P3 Menu Aberto</b>, sempre com "Dados" desmarcado, e ligue os botões ☰ e ✕ de cada página aos indicadores da própria página.</li>
+  <li>Opcional: nos botões de navegação, use Ação › Indicador › <b>P2 Menu Fechado</b> em vez de Navegação de página. Assim o usuário chega na outra tela já com o menu recolhido.</li>
+</ol>
+</section>
+
+<!-- 11 -->
+<section class="step" id="s11" data-t="Sincronizar filtros">
+<div class="sh"><span class="num">11</span><h2>Sincronizar filtros entre telas</h2></div>
+<ol class="steps">
+  <li><span class="ui">Exibir › Sincronizar segmentações</span>.</li>
+  <li>Selecione a segmentação de <b>Torre</b> e marque as 3 páginas nas duas colunas (sincronizar e visível).</li>
+  <li>Faça o mesmo com <b>Mês</b> nas páginas Movimento e Ocorrências.</li>
+</ol>
+<p>Agora, ao escolher Torre A na tela de moradores e navegar pelo menu, as outras telas já abrem filtradas.</p>
+</section>
+
+<!-- 12 -->
+<section class="step" id="s12" data-t="Acabamento">
+<div class="sh"><span class="num">12</span><h2>Acabamento e entrega</h2></div>
+<ol class="steps">
+  <li>Dê títulos claros a todos os visuais (nada de "Contagem de ID por Andar").</li>
+  <li>Na lista de campos, oculte as colunas das tabelas <b>f</b> que já viraram medidas (IDs, Valor_Multa, Vagas_Ocupadas). Fica mais fácil achar o que importa.</li>
+  <li>Oculte o painel lateral de filtros para o usuário final (Formatar › Painel de filtros › Visibilidade). Os filtros dele são as segmentações.</li>
+  <li>Teste o clique cruzado: clicar numa barra de "Por categoria" deve filtrar o restante da tela 3.</li>
+  <li>Publique em <span class="ui">Página Inicial › Publicar</span>. No serviço, os botões funcionam com clique simples.</li>
+</ol>
+<h3>Desafios extras (para quem terminar antes)</h3>
+<ul>
+  <li>Card com <code>[Idade Média]</code> e <code>[% Inquilinos]</code> na tela 1.</li>
+  <li>Variação mensal das ocorrências:
+  <div class="codebox"><pre>Var % Ocorrências =
+VAR atual = [Total Ocorrências]
+VAR anterior = CALCULATE([Total Ocorrências], DATEADD(dCalendario[Data], -1, MONTH))
+RETURN DIVIDE(atual - anterior, anterior)</pre><button class="copy">Copiar</button></div></li>
+  <li>Dica de ferramenta (tooltip page) que mostra a categoria mais frequente ao passar o mouse numa unidade.</li>
+  <li>Página de detalhamento (drill-through) por ID_Unidade, com a ficha do apartamento.</li>
+</ul>
+</section>
+
+<p class="foot">Material elaborado por <b>Prof. Gustavo</b> · <a href="https://gustavoweb.com" target="_blank" rel="noopener">gustavoweb.com</a><br>Dados fictícios de 01/04/2026 a 30/09/2026 · Base_PowerBI_Condominio.xlsx</p>
+</main>
+</div>
+
+<script>
+const steps=[...document.querySelectorAll("section.step")];
+const toc=document.getElementById("toc");
+let done={}; try{ done=JSON.parse(localStorage.getItem("pbi-condo-steps")||"{}"); }catch(e){}
+function save(){ try{ localStorage.setItem("pbi-condo-steps",JSON.stringify(done)); }catch(e){} }
+function refresh(){
+  const n=steps.filter(s=>done[s.id]).length;
+  document.getElementById("fill").style.width=(n/steps.length*100)+"%";
+  document.getElementById("progTxt").textContent=n+" de "+steps.length+" etapas";
+  steps.forEach(s=>document.querySelector('.toc a[href="#'+s.id+'"]').classList.toggle("done",!!done[s.id]));
+}
+steps.forEach((s,i)=>{
+  const li=document.createElement("li");
+  li.innerHTML='<a href="#'+s.id+'"><span>'+String(i+1).padStart(2,"0")+'</span>'+s.dataset.t+'</a>';
+  toc.appendChild(li);
+  const lab=document.createElement("label"); lab.className="mark";
+  lab.innerHTML='<input type="checkbox" id="chk-'+s.id+'"> Concluída';
+  s.querySelector(".sh").appendChild(lab);
+  const cb=lab.querySelector("input"); cb.checked=!!done[s.id];
+  cb.onchange=()=>{ done[s.id]=cb.checked; save(); refresh(); };
+});
+refresh();
+document.querySelectorAll(".copy").forEach(b=>b.onclick=async()=>{
+  const txt=b.previousElementSibling.innerText;
+  try{ await navigator.clipboard.writeText(txt); b.textContent="Copiado"; }
+  catch(e){ const r=document.createRange(); r.selectNodeContents(b.previousElementSibling); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent="Selecionado, use Ctrl+C"; }
+  setTimeout(()=>b.textContent="Copiar",1800);
+});
+</script>
+</body>
+</html>
